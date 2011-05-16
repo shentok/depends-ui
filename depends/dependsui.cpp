@@ -32,6 +32,7 @@
 DependsUI::DependsUI ( QWidget* parent, const char* name, WFlags fl ) :
 	DependsUIBase ( parent,name,fl )
 {
+	fileOpen();
 }
 
 DependsUI::~DependsUI()

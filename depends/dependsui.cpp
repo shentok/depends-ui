@@ -55,8 +55,6 @@ void DependsUI::fileOpen()
 	}
 }
 
-#include "dependsui.moc"
-
 void DependsUI::openFile( const QString &file )
 {
 	setCaption( "Dependency Walker - [" + QFileInfo( file ).fileName() + "]" );

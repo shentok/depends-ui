@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "importsexportsjob.h"
 
-#import <qlistview.h>
+#include <qlistview.h>
 #include <qregexp.h>
 
 #include <iostream>

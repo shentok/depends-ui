@@ -48,7 +48,7 @@ void DependencyJob::readLineStdout()
 	{
 		QString line = m_proc.readLineStdout();
 
-		QRegExp re( "  NEEDED      (\\S+)" );
+		QRegExp re( "\\s+NEEDED\\s+(\\S+)" );
 		if ( re.search( line ) >= 0 )
 		{
 			QListViewItem *pItem = new QListViewItem( m_pItem );

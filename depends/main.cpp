@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include <QApplication>
+#include <QTimer>
+
 #include "dependsui.h"
 
 
@@ -29,6 +31,15 @@ int main( int argc, char *argv[] )
 	DependsUI ui;
 
 	ui.show();
+
+	if ( argc == 2 )
+	{
+		ui.openFile( argv[1] );
+	}
+	else
+	{
+		QTimer::singleShot( 0, &ui, SLOT(fileOpen()) );
+	}
 
 	return app.exec();
 }

@@ -44,8 +44,6 @@ DependsUI::DependsUI( QWidget *parent, Qt::WindowFlags flags ) :
 	connect( m_ui.fileExitAction, SIGNAL(activated()), this, SLOT(fileExit()) );
 	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencyExpanded(QTreeWidgetItem*)) );
 	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencySelected(QTreeWidgetItem*)) );
-
-	fileOpen();
 }
 
 DependsUI::~DependsUI()

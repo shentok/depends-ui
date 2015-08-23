@@ -22,9 +22,11 @@
 
 #include <qobject.h>
 
-#include <qprocess.h>
+#include <QMap>
+#include <QProcess>
+#include <QTextStream>
 
-class QListViewItem;
+class QTreeWidgetItem;
 
 /**
  * @author Bernhard Beschow <bbeschow (.at) cs.tu-berlin.de>
@@ -35,7 +37,7 @@ class DependencyJob : public QObject
 public:
 	class UnusedDependenciesJob;
 
-	DependencyJob( QListViewItem *pItem, const QMap<QString, QString> *pLDDMap );
+	DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QString> *pLDDMap );
 
 signals:
 	void finished();
@@ -45,10 +47,11 @@ protected slots:
 	void readLineStdout();
 
 protected:
-	QListViewItem *m_pItem;
+	QTreeWidgetItem *m_pItem;
 	const QMap<QString, QString> *m_pLDDMap;
 	QMap<QString, QString> m_unusedMap;
 	QProcess m_proc;
+	QTextStream m_stream;
 };
 
 class DependencyJob::UnusedDependenciesJob : public QObject
@@ -66,6 +69,7 @@ protected slots:
 protected:
 	QMap<QString, QString> *m_pUnusedMap;
 	QProcess m_proc;
+	QTextStream m_stream;
 };
 
 #endif

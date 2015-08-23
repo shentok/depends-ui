@@ -21,32 +21,34 @@
 #ifndef DEPENDSUI_H
 #define DEPENDSUI_H
 
-#include "dependsuibase.h"
+#include "ui_dependsuibase.h"
 
-#include <qprocess.h>
+#include <QMainWindow>
 
-class QListViewItem;
+class QTreeWidgetItem;
 
-class DependsUI : public DependsUIBase
+class DependsUI : public QMainWindow
 {
 Q_OBJECT
 
 public:
-	DependsUI ( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+	DependsUI( QWidget *parent = 0, Qt::WindowFlags flags = 0 );
 	~DependsUI();
 	/*$PUBLIC_FUNCTIONS$*/
 
-public slots:
-	/*$PUBLIC_SLOTS$*/
-	virtual void          fileExit();
-	virtual void          fileOpen();
 	void openFile( const QString &file );
 
-protected slots:
-	void dependencyExpanded( QListViewItem *pItem );
-	void dependencySelected( QListViewItem *pItem );
+public Q_SLOTS:
+	/*$PUBLIC_SLOTS$*/
+	virtual void fileExit();
+	virtual void fileOpen();
 
-protected:
+private Q_SLOTS:
+	void dependencyExpanded( QTreeWidgetItem *pItem );
+	void dependencySelected( QTreeWidgetItem *pItem );
+
+private:
+	Ui::DependsUIBase m_ui;
 	QMap<QString, QString> m_lddMap;
 	QString m_dirPath;
 };

@@ -20,9 +20,11 @@
 #ifndef INITJOB_H
 #define INITJOB_H
 
-#include <qobject.h>
+#include <QObject>
 
-#include <qprocess.h>
+#include <QMap>
+#include <QProcess>
+#include <QTextStream>
 
 /**
  * @author Bernhard Beschow <bbeschow (.at) cs.tu-berlin.de>
@@ -42,6 +44,7 @@ protected slots:
 protected:
 	QMap<QString, QString> *m_pMap;
 	QProcess m_proc;
+	QTextStream m_stream;
 };
 
 #endif

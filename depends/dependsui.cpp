@@ -23,56 +23,80 @@
 #include "importsexportsjob.h"
 #include "dependencyjob.h"
 
-#include <qfiledialog.h>
-#include <qlistview.h>
-#include <qregexp.h>
+#include <QAction>
+#include <QFileDialog>
+#include <QHeaderView>
+#include <QTreeWidgetItem>
 
-#include <iostream>
 
-DependsUI::DependsUI ( QWidget* parent, const char* name, WFlags fl ) :
-	DependsUIBase ( parent,name,fl )
+DependsUI::DependsUI( QWidget *parent, Qt::WindowFlags flags ) :
+	QMainWindow( parent, flags ),
+	m_ui()
 {
+	m_ui.setupUi( this );
+	m_ui.m_pListImports->header()->setResizeMode( QHeaderView::ResizeToContents );
+	m_ui.m_pListImports->setSortingEnabled( true );
+	m_ui.m_pListExports->header()->setResizeMode( QHeaderView::ResizeToContents );
+	m_ui.m_pListExports->setSortingEnabled( true );
+	m_ui.m_pTreeSharedObjects->header()->setResizeMode( QHeaderView::ResizeToContents );
+
+	connect( m_ui.fileOpenAction, SIGNAL(activated()), this, SLOT(fileOpen()) );
+	connect( m_ui.fileExitAction, SIGNAL(activated()), this, SLOT(fileExit()) );
+	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencyExpanded(QTreeWidgetItem*)) );
+	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencySelected(QTreeWidgetItem*)) );
+
 	fileOpen();
 }
 
 DependsUI::~DependsUI()
 {}
 
-/*$SPECIALIZATION$*/
 void DependsUI::fileExit()
-{}
+{
+	close();
+}
 
 void DependsUI::fileOpen()
 {
 	QFileDialog dlg( this );
 
 	if ( ! m_dirPath.isEmpty() )
-		dlg.setDir( QDir( m_dirPath ) );
+		dlg.setDirectory( QDir( m_dirPath ) );
 
-	if ( dlg.exec() == QDialog::Accepted )
+	if ( dlg.exec() != QDialog::Accepted )
 	{
-		m_dirPath = dlg.dirPath();
-		openFile( dlg.selectedFile() );
+		return;
 	}
+
+	m_dirPath = dlg.directory().path();
+
+	const QStringList selectedFiles = dlg.selectedFiles();
+
+	if ( selectedFiles.isEmpty() )
+	{
+		return;
+	}
+
+	openFile( selectedFiles.first() );
 }
 
 void DependsUI::openFile( const QString &file )
 {
-	setCaption( "Dependency Walker - [" + QFileInfo( file ).fileName() + "]" );
-	m_pTreeSharedObjects->clear();
-	m_pListSummarySharedObjects->clear();
-	m_pListImports->clear();
-	m_pListExports->clear();
+	setWindowTitle( tr( "Dependency Walker - [%1]" ).arg( QFileInfo( file ).fileName() ) );
+	m_ui.m_pTreeSharedObjects->clear();
+	m_ui.m_pListSummarySharedObjects->clear();
+	m_ui.m_pListImports->clear();
+	m_ui.m_pListExports->clear();
 
-	QListViewItem *pItem = new QListViewItem( m_pTreeSharedObjects );
+	QTreeWidgetItem *pItem = new QTreeWidgetItem( m_ui.m_pTreeSharedObjects );
 	pItem->setText( 0, QFileInfo( file ).fileName() );
 	pItem->setText( 2, file );
-	pItem->setExpandable( true );
+#warning	pItem->setExpandable( true );
 
 	new InitJob( file, &m_lddMap );
 }
 
-void DependsUI::dependencyExpanded( QListViewItem *pItem )
+void DependsUI::dependencyExpanded( QTreeWidgetItem *pItem )
 {
 	if ( pItem->childCount() > 0 )
 		return;
@@ -80,7 +104,7 @@ void DependsUI::dependencyExpanded( QListViewItem *pItem )
 	new DependencyJob( pItem, &m_lddMap );
 }
 
-void DependsUI::dependencySelected( QListViewItem *pItem )
+void DependsUI::dependencySelected( QTreeWidgetItem *pItem )
 {
-	new ImportsExportsJob( pItem, m_pListImports, m_pListExports );
+	new ImportsExportsJob( pItem, m_ui.m_pListImports, m_ui.m_pListExports );
 }

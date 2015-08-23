@@ -19,38 +19,40 @@
  ***************************************************************************/
 #include "importsexportsjob.h"
 
-#include <qlistview.h>
-#include <qregexp.h>
+#include <QRegExp>
+#include <QTreeWidget>
 
-#include <iostream>
 
-ImportsExportsJob::ExportsJob::ExportsJob( const QString &file, QListView *pExports, QMap<QString, QString> *pMap ) :
+ImportsExportsJob::ExportsJob::ExportsJob( const QString &file, QTreeWidget *pExports, QMap<QString, QString> *pMap ) :
 	m_pExports( pExports ),
-	m_pExportsMap( pMap )
+	m_pExportsMap( pMap ),
+	m_proc(),
+	m_stream( &m_proc )
 {
-	connect( &m_proc, SIGNAL( readyReadStdout() ), this, SLOT( readLineStdout() ) );
-	connect( &m_proc, SIGNAL( processExited() ), this, SLOT( readLineStdout() ) );
+	m_proc.setReadChannel( QProcess::StandardOutput );
 
-	m_proc.addArgument( "objdump" );
-	m_proc.addArgument( "-TC" );
-	m_proc.addArgument( file );
-	m_proc.start();
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+
+	const QStringList args = QStringList() << "-TC" << file;
+
+	m_proc.start( "objdump", args );
 }
 
 
 void ImportsExportsJob::ExportsJob::readLineStdout()
 {
-	while ( m_proc.canReadLineStdout() )
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
-		QString line = m_proc.readLineStdout();
+		const QString line = m_stream.readLine();
 
-		QRegExp re( "^([0-9a-f]{8})\\s(.)(.)(.)(.)(.)(.)(.)\\s(\\S+)\t([0-9a-f]{8})\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
-		if ( re.search( line ) >= 0 )
+		const QRegExp re( "^([0-9a-f]+)\\s(.)(.)(.)(.)(.)(.)(.)\\s(\\S+)\t([0-9a-f]+)\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
+		if ( re.indexIn( line ) >= 0 )
 		{
 			if ( re.cap( 9 ).compare( "*UND*" ) == 0 )
 				continue;
 
-			QListViewItem *pItem = new QListViewItem( m_pExports );
+			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pExports );
 
 			pItem->setText( 0, re.cap( 1 ) );
 			pItem->setText( 1, re.cap( 2 ) );
@@ -69,11 +71,8 @@ void ImportsExportsJob::ExportsJob::readLineStdout()
 		}
 	}
 
-	if ( ! m_proc.isRunning() )
+	if ( m_proc.state() == QProcess::NotRunning )
 	{
-		for ( int i = 0; i < 12; ++i )
-			m_pExports->adjustColumn( i );
-
 		emit finished();
 		disconnect( this, 0, 0, 0 );
 		deleteLater();
@@ -81,28 +80,31 @@ void ImportsExportsJob::ExportsJob::readLineStdout()
 }
 
 
-ImportsExportsJob::ImportsJob::ImportsJob( const QString &file, QListView *pImports, const QMap<QString, QString> *pMap ) :
+ImportsExportsJob::ImportsJob::ImportsJob( const QString &file, QTreeWidget *pImports, const QMap<QString, QString> *pMap ) :
 	m_pImports( pImports ),
-	m_pImportsMap( pMap )
+	m_pImportsMap( pMap ),
+	m_proc(),
+	m_stream( &m_proc )
 {
-	connect( &m_proc, SIGNAL( readyReadStdout() ), this, SLOT( readLineStdout() ) );
-	connect( &m_proc, SIGNAL( processExited() ), this, SLOT( readLineStdout() ) );
+	m_proc.setReadChannel( QProcess::StandardOutput );
 
-	m_proc.addArgument( "objdump" );
-	m_proc.addArgument( "-TC" );
-	m_proc.addArgument( file );
-	m_proc.start();
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+
+	const QStringList args = QStringList() << "-TC" << file;
+
+	m_proc.start( "objdump", args );
 }
 
 
 void ImportsExportsJob::ImportsJob::readLineStdout()
 {
-	while ( m_proc.canReadLineStdout() )
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
-		QString line = m_proc.readLineStdout();
+		const QString line = m_stream.readLine();
 
-		QRegExp re( "^([0-9a-f]{8})\\s(.)(.)(.)(.)(.)(.)(.)\\s(\\S+)\t([0-9a-f]{8})\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
-		if ( re.search( line ) >= 0 )
+		const QRegExp re( "^([0-9a-f]+)\\s(.)(.)(.)(.)(.)(.)(.)\\s(\\S+)\t([0-9a-f]+)\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
+		if ( re.indexIn( line ) >= 0 )
 		{
 			if ( re.cap( 9 ).compare( "*UND*" ) != 0 )
 				continue;
@@ -110,7 +112,7 @@ void ImportsExportsJob::ImportsJob::readLineStdout()
 			if ( m_pImportsMap->contains( re.cap( 12 ) ) )
 			{
 //				re.search( (*m_pImportsMap)[ re.cap( 12 ) ] );
-				QListViewItem *pItem = new QListViewItem( m_pImports );
+				QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pImports );
 
 				pItem->setText( 0, re.cap( 1 ) );
 				pItem->setText( 1, re.cap( 2 ) );
@@ -128,18 +130,15 @@ void ImportsExportsJob::ImportsJob::readLineStdout()
 		}
 	}
 
-	if ( ! m_proc.isRunning() )
+	if ( m_proc.state() == QProcess::NotRunning )
 	{
-		for ( int i = 0; i < 12; ++i )
-			m_pImports->adjustColumn( i );
-
 		emit finished();
 		disconnect( this, 0, 0, 0 );
 		deleteLater();
 	}
 }
 
-ImportsExportsJob::ImportsExportsJob( QListViewItem *pItem, QListView *pImports, QListView *pExports ) :
+ImportsExportsJob::ImportsExportsJob( QTreeWidgetItem *pItem, QTreeWidget *pImports, QTreeWidget *pExports ) :
 	m_pItem( pItem ),
 	m_pImports( pImports )
 {
@@ -160,5 +159,7 @@ void ImportsExportsJob::buildImports()
 		connect( pJob, SIGNAL( finished() ), this, SIGNAL( finished() ) );
 	}
 	else
+	{
 		emit finished();
+	}
 }

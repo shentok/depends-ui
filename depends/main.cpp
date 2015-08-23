@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <qapplication.h>
+#include <QApplication>
 #include "dependsui.h"
 
 
@@ -28,7 +28,6 @@ int main( int argc, char *argv[] )
 
 	DependsUI ui;
 
-	app.setMainWidget( &ui );
 	ui.show();
 
 	return app.exec();

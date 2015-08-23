@@ -20,10 +20,12 @@
 #ifndef IMPORTSEXPORTSJOB_H
 #define IMPORTSEXPORTSJOB_H
 
-#include <qprocess.h>
+#include <QMap>
+#include <QProcess>
+#include <QTextStream>
 
-class QListView;
-class QListViewItem;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 /**
  * @author Bernhard Beschow <bbeschow (.at) cs.tu-berlin.de>
@@ -36,7 +38,7 @@ public:
 	class ExportsJob;
 	class ImportsJob;
 
-	ImportsExportsJob( QListViewItem *pItem, QListView *pImports, QListView *pExports );
+	ImportsExportsJob( QTreeWidgetItem *pItem, QTreeWidget *pImports, QTreeWidget *pExports );
 
 signals:
 	void finished();
@@ -45,16 +47,16 @@ protected slots:
 	void buildImports();
 
 protected:
-	QListViewItem *m_pItem;
+	QTreeWidgetItem *m_pItem;
 	QMap<QString, QString> m_map;
-	QListView *m_pImports;
+	QTreeWidget *m_pImports;
 };
 
 class ImportsExportsJob::ImportsJob : public QObject
 {
 	Q_OBJECT
 public:
-	ImportsJob( const QString &file, QListView *pImports, const QMap<QString, QString> *pMap );
+	ImportsJob( const QString &file, QTreeWidget *pImports, const QMap<QString, QString> *pMap );
 
 signals:
 	void finished();
@@ -63,16 +65,17 @@ protected slots:
 	void readLineStdout();
 
 protected:
-	QListView *m_pImports;
+	QTreeWidget *m_pImports;
 	const QMap<QString, QString> *m_pImportsMap;
 	QProcess m_proc;
+	QTextStream m_stream;
 };
 
 class ImportsExportsJob::ExportsJob : public QObject
 {
 	Q_OBJECT
 public:
-	ExportsJob( const QString &file, QListView *pExports, QMap<QString, QString> *pMap );
+	ExportsJob( const QString &file, QTreeWidget *pExports, QMap<QString, QString> *pMap );
 
 signals:
 	void finished();
@@ -81,9 +84,10 @@ protected slots:
 	void readLineStdout();
 
 protected:
-	QListView *m_pExports;
+	QTreeWidget *m_pExports;
 	QMap<QString, QString> *m_pExportsMap;
 	QProcess m_proc;
+	QTextStream m_stream;
 };
 
 

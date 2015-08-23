@@ -19,32 +19,38 @@
  ***************************************************************************/
 #include "initjob.h"
 
-#include <qregexp.h>
+#include <QRegExp>
 
 InitJob::InitJob( const QString &file, QMap<QString, QString> *pMap ) :
-	m_pMap( pMap )
+	m_pMap( pMap ),
+	m_proc(),
+	m_stream( &m_proc )
 {
-	connect( &m_proc, SIGNAL( readyReadStdout() ), this, SLOT( readLineStdout() ) );
-	connect( &m_proc, SIGNAL( processExited() ), this, SLOT( readLineStdout() ) );
+	m_proc.setReadChannel( QProcess::StandardOutput );
 
-	m_proc.addArgument( "ldd" );
-	m_proc.addArgument( file );
-	m_proc.start();
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+
+	const QStringList args = QStringList() << file;
+
+	m_proc.start( "ldd", args );
 }
 
 
 void InitJob::readLineStdout()
 {
-	while ( m_proc.canReadLineStdout() )
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
-		QString line = m_proc.readLineStdout();
+		const QString line = m_stream.readLine();
 
-		QRegExp re( "^\t(\\S+) => (\\S+) \\(0x[0-9a-f]{8}\\)" );
-		if ( re.search( line ) >= 0 )
+		const QRegExp re( "^\\s+(\\S+) => (\\S+) \\(0x[0-9a-f]+\\)" );
+		if ( re.indexIn( line ) >= 0 )
+		{
 			(*m_pMap)[ re.cap( 1 ) ] = re.cap( 2 );
+		}
 	}
 
-	if ( ! m_proc.isRunning() )
+	if ( m_proc.state() == QProcess::NotRunning )
 	{
 		emit finished();
 		disconnect( this, 0, 0, 0 );

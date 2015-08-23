@@ -19,15 +19,21 @@
  ***************************************************************************/
 #include "dependencyjob.h"
 
-#include <qlistview.h>
-#include <qregexp.h>
+#include <QFileInfo>
+#include <QRegExp>
+#include <QTextStream>
+#include <QTreeWidgetItem>
 
-DependencyJob::DependencyJob( QListViewItem *pItem, const QMap<QString, QString> *pLDDMap ) :
+DependencyJob::DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QString> *pLDDMap ) :
 	m_pItem( pItem ),
-	m_pLDDMap( pLDDMap )
+	m_pLDDMap( pLDDMap ),
+	m_proc(),
+	m_stream( &m_proc )
 {
-	connect( &m_proc, SIGNAL( readyReadStdout() ), this, SLOT( readLineStdout() ) );
-	connect( &m_proc, SIGNAL( processExited() ), this, SLOT( readLineStdout() ) );
+	m_proc.setReadChannel( QProcess::StandardOutput );
+
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
 
 	UnusedDependenciesJob *pJob = new UnusedDependenciesJob( pItem->text( 2 ), &m_unusedMap );
 	connect( pJob, SIGNAL( finished() ), this, SLOT( finishedUnusedDependenciesJob() ) );
@@ -35,23 +41,21 @@ DependencyJob::DependencyJob( QListViewItem *pItem, const QMap<QString, QString>
 
 void DependencyJob::finishedUnusedDependenciesJob()
 {
-	m_proc.addArgument( "objdump" );
-	m_proc.addArgument( "-p" );
-	m_proc.addArgument( m_pItem->text( 2 ) );
+	const QStringList args = QStringList() << "-p" << m_pItem->text( 2 );
 
-	m_proc.start();
+	m_proc.start( "objdump", args );
 }
 
 void DependencyJob::readLineStdout()
 {
-	while ( m_proc.canReadLineStdout() )
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
-		QString line = m_proc.readLineStdout();
+		const QString line = m_stream.readLine();
 
-		QRegExp re( "\\s+NEEDED\\s+(\\S+)" );
-		if ( re.search( line ) >= 0 )
+		const QRegExp re( "\\s+NEEDED\\s+(\\S+)" );
+		if ( re.indexIn( line ) >= 0 )
 		{
-			QListViewItem *pItem = new QListViewItem( m_pItem );
+			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pItem );
 
 			pItem->setText( 0, re.cap( 1 ) );
 			pItem->setText( 2, (*m_pLDDMap)[ re.cap( 1 ) ] );
@@ -60,14 +64,18 @@ void DependencyJob::readLineStdout()
 			//	pItem->setEnabled( false );
 			}
 			else
-				pItem->setExpandable( true );
+			{
+#warning				pItem->setExpandable( true );
+			}
 		}
 	}
 
-	if ( ! m_proc.isRunning() )
+	if ( m_proc.state() == QProcess::NotRunning )
 	{
 		if ( m_pItem->childCount() == 0 )
-			m_pItem->setExpandable( false );
+		{
+#warning			m_pItem->setExpandable( false );
+		}
 
 		emit finished();
 		disconnect( this, 0, 0, 0 );
@@ -77,31 +85,33 @@ void DependencyJob::readLineStdout()
 
 
 DependencyJob::UnusedDependenciesJob::UnusedDependenciesJob( const QString &file, QMap<QString, QString> *pUnusedMap ) :
-	m_pUnusedMap( pUnusedMap )
+	m_pUnusedMap( pUnusedMap ),
+	m_proc(),
+	m_stream( &m_proc )
 {
-	connect( &m_proc, SIGNAL( readyReadStdout() ), this, SLOT( readLineStdout() ) );
-	connect( &m_proc, SIGNAL( processExited() ), this, SLOT( readLineStdout() ) );
+	m_proc.setReadChannel( QProcess::StandardOutput );
 
-	m_proc.addArgument( "ldd" );
-	m_proc.addArgument( "-u" );
-	m_proc.addArgument( file );
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
 
-	m_proc.start();
+	const QStringList args = QStringList() << "-u" << file;
+
+	m_proc.start( "ldd", args );
 }
 
 
 void DependencyJob::UnusedDependenciesJob::readLineStdout()
 {
-	while ( m_proc.canReadLineStdout() )
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
-		QString line = m_proc.readLineStdout();
+		const QString line = m_stream.readLine();
 
-		QRegExp re( "\\s+(\\S+)" );
-		if ( re.search( line ) >= 0 )
+		const QRegExp re( "\\s+(\\S+)" );
+		if ( re.indexIn( line ) >= 0 )
 			(*m_pUnusedMap)[ re.cap( 1 ) ] = QFileInfo( re.cap( 1 ) ).fileName();
 	}
 
-	if ( ! m_proc.isRunning() )
+	if ( m_proc.state() == QProcess::NotRunning )
 	{
 		emit finished();
 		disconnect( this, 0, 0, 0 );

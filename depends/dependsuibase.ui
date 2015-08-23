@@ -1,717 +1,298 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>DependsUIBase</class>
-<author>Bernhard Beschow</author>
-<widget class="QMainWindow">
-    <property name="name">
-        <cstring>DependsUIBase</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>559</width>
-            <height>480</height>
-        </rect>
-    </property>
-    <property name="caption">
-        <string>Dependency Walker</string>
-    </property>
-    <property name="icon">
-        <pixmap>image0</pixmap>
-    </property>
-    <property name="opaqueMoving">
-        <bool>false</bool>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Bernhard Beschow</author>
+ <class>DependsUIBase</class>
+ <widget class="QMainWindow" name="DependsUIBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>553</width>
+    <height>474</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dependency Walker</string>
+  </property>
+  <property name="opaqueMoving" stdset="0">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="widget">
+   <layout class="QVBoxLayout">
+    <item>
+     <widget class="QSplitter" name="splitter1">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QSplitter" name="splitter2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QTreeWidget" name="m_pTreeSharedObjects">
+        <property name="rootIsDecorated">
+         <bool>true</bool>
         </property>
-        <widget class="QSplitter">
-            <property name="name">
-                <cstring>splitter1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <widget class="QSplitter">
-                <property name="name">
-                    <cstring>splitter2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <widget class="QListView">
-                    <column>
-                        <property name="text">
-                            <string>Imported Libraries</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Version</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Path</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <property name="name">
-                        <cstring>m_pTreeSharedObjects</cstring>
-                    </property>
-                    <property name="showSortIndicator">
-                        <bool>true</bool>
-                    </property>
-                    <property name="rootIsDecorated">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizeMode">
-                        <enum>LastColumn</enum>
-                    </property>
-                </widget>
-                <widget class="QSplitter">
-                    <property name="name">
-                        <cstring>splitter3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <widget class="QListView">
-                        <column>
-                            <property name="text">
-                                <string>VAdr</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Type</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Section</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Size</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Name</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>m_pListImports</cstring>
-                        </property>
-                        <property name="allColumnsShowFocus">
-                            <bool>true</bool>
-                        </property>
-                        <property name="showSortIndicator">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizeMode">
-                            <enum>NoColumn</enum>
-                        </property>
-                    </widget>
-                    <widget class="QListView">
-                        <column>
-                            <property name="text">
-                                <string>VAdr</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Type</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Section</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Size</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>?</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Name</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>m_pListExports</cstring>
-                        </property>
-                        <property name="allColumnsShowFocus">
-                            <bool>true</bool>
-                        </property>
-                        <property name="showSortIndicator">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizeMode">
-                            <enum>NoColumn</enum>
-                        </property>
-                    </widget>
-                </widget>
-            </widget>
-            <widget class="QListView">
-                <column>
-                    <property name="text">
-                        <string>No</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Type</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>File Offset</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Size</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <property name="name">
-                    <cstring>m_pListSummarySharedObjects</cstring>
-                </property>
-                <property name="showSortIndicator">
-                    <bool>true</bool>
-                </property>
-            </widget>
+        <property name="showSortIndicator" stdset="0">
+         <bool>true</bool>
+        </property>
+        <column>
+         <property name="text">
+          <string>Imported Libraries</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Version</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Path</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QSplitter" name="splitter3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QTreeWidget" name="m_pListImports">
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="allColumnsShowFocus">
+          <bool>true</bool>
+         </property>
+         <property name="showSortIndicator" stdset="0">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>VAdr</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Section</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Size</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
         </widget>
-    </vbox>
-</widget>
-<menubar>
-    <property name="name">
-        <cstring>MenuBar</cstring>
+        <widget class="QTreeWidget" name="m_pListExports">
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="allColumnsShowFocus">
+          <bool>true</bool>
+         </property>
+         <property name="showSortIndicator" stdset="0">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>VAdr</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Section</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Size</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>?</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QTreeWidget" name="m_pListSummarySharedObjects">
+       <property name="showSortIndicator" stdset="0">
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>No</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Type</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>File Offset</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Size</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="label" stdset="0">
+    <string>Tools</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="fileOpenAction"/>
+  </widget>
+  <widget class="QMenuBar" name="MenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>553</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="fileMenu">
+    <property name="title">
+     <string>&amp;File</string>
     </property>
-    <item text="&amp;File" name="fileMenu">
-        <action name="fileNewAction"/>
-        <action name="fileOpenAction"/>
-        <action name="fileSaveAction"/>
-        <action name="fileSaveAsAction"/>
-        <separator/>
-        <action name="filePrintAction"/>
-        <separator/>
-        <action name="fileExitAction"/>
-    </item>
-    <item text="&amp;Help" name="helpMenu">
-        <action name="helpContentsAction"/>
-        <action name="helpIndexAction"/>
-        <separator/>
-        <action name="helpAboutAction"/>
-    </item>
-</menubar>
-<toolbars>
-    <toolbar dock="2">
-        <property name="name">
-            <cstring>toolBar</cstring>
-        </property>
-        <property name="label">
-            <string>Tools</string>
-        </property>
-        <action name="fileOpenAction"/>
-    </toolbar>
-</toolbars>
-<actions>
-    <action>
-        <property name="name">
-            <cstring>fileNewAction</cstring>
-        </property>
-        <property name="iconSet">
-            <iconset>image1</iconset>
-        </property>
-        <property name="text">
-            <string>New</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;New</string>
-        </property>
-        <property name="accel">
-            <string>Ctrl+N</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>fileOpenAction</cstring>
-        </property>
-        <property name="iconSet">
-            <iconset>image2</iconset>
-        </property>
-        <property name="text">
-            <string>Open</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Open...</string>
-        </property>
-        <property name="accel">
-            <string>Ctrl+O</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>fileSaveAction</cstring>
-        </property>
-        <property name="iconSet">
-            <iconset>image3</iconset>
-        </property>
-        <property name="text">
-            <string>Save</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Save</string>
-        </property>
-        <property name="accel">
-            <string>Ctrl+S</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>fileSaveAsAction</cstring>
-        </property>
-        <property name="text">
-            <string>Save As</string>
-        </property>
-        <property name="menuText">
-            <string>Save &amp;As...</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>filePrintAction</cstring>
-        </property>
-        <property name="iconSet">
-            <iconset>image4</iconset>
-        </property>
-        <property name="text">
-            <string>Print</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Print...</string>
-        </property>
-        <property name="accel">
-            <string>Ctrl+P</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>fileExitAction</cstring>
-        </property>
-        <property name="text">
-            <string>Exit</string>
-        </property>
-        <property name="menuText">
-            <string>E&amp;xit</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>helpContentsAction</cstring>
-        </property>
-        <property name="text">
-            <string>Contents</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Contents...</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>helpIndexAction</cstring>
-        </property>
-        <property name="text">
-            <string>Index</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Index...</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>helpAboutAction</cstring>
-        </property>
-        <property name="text">
-            <string>About</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;About</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-</actions>
-<images>
-    <image name="image0">
-        <data format="PNG" length="303">89504e470d0a1a0a0000000d4948445200000020000000200806000000737a7af4000000f6494441545885ed97cd0e84200c84a71b1fbc3ef9ec016bba082a86c21e6c42221c9c8fbf19159298599fa9ea2fc00b006001001169be0a24a507805b013634605dd7dbd067130cdf021121c92a4428c02e0e00158830801f71ab0244f40a1c073388500085023944dedfc288001bdafd2ba3d0f49c84f63eb90d3d0550d5fd25f60edff7e3269a8b934c46145924c5f65ca107031b62c5265a72cf615950b36eb7055dacbdb91620d1b5787b6b6da6549ca1f4fa26ac89b82c187f064c1c021093b2c01fad12c4f02cc821c2b340b2db95f70fd6f9b4e1220b68165eca82c8868b2ce8760dcfcaeff9df65c1901538abe93f26d301be230e95a7499f05a30000000049454e44ae426082</data>
-    </image>
-    <image name="image1">
-        <data format="PNG" length="193">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000008849444154388d633c7aec28032d000bba80b595f57f62341e3d7694119f3c1336c1ffffffe3c40c0c0c0c9a3a9a041d80d56042c0d0d090a0e16419aca9a1c990ed9b8dd770b20cae89ac6178cff31eafcbc93298411162383e9763a40a62002323de04419ec1b09441c832f2828208306af0a8c1a306e30158b33431650121c048ab3a8f664101000ff134b2369561a70000000049454e44ae426082</data>
-    </image>
-    <image name="image2">
-        <data format="PNG" length="253">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000000c449444154388db594d10dc3200c449f51c7c82464b6aaaa3a9bbd16fd08b424413454e67e2c13f9f97444889a3243610a7526f8363ab0c635d5bd9acaf1bb9aca10b80cb516a9a9d44bc5ebf26aa89a8a4bc6c7782067fc2bb751288000292580545a44ae717b06f2e57da12079939cce479687caf860ed2bb41c5fab7d35331ecdbaa566c635f4f584085835d4ebef8fad3633de41976d282e19d2e90b544d2547e1e7b4fc823bc71e4ecbd28f632fa745017075ba73ece9f404fe47bdb7c2ed3d3eea0dbc728fba7e6c90bb0000000049454e44ae426082</data>
-    </image>
-    <image name="image3">
-        <data format="PNG" length="349">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000012449444154388db595316e833014863faa1c2007f001aa8c198dd4a547e94910e7c851ba20f98d19a34e997c80dcc01d8cc18e21d8157d0bfcc0fbf9f978b21b2386ffa80340ab5bb7a7a911d3bc05f17d81be1b6f0c067777b8c1e1ee6e5303930e35198b053d9e6ba5112ba040ac6c6adfef7582c29b797300ec6cae955ed6c74803ed479be048124f1525bbfedce0b890f411693cc6803231d6d167c4c9ceeac4d5ded6938f89e3fe32c60fe1fc7e2a603cf76789258812c62a659cf497302e9a8ee7fe12c625c997181f6633cfa8eff2d1d9aabecb196773ac957f30d635c70c45b818defc57fd32f1e7571509c0af35ab8997debc566121328349fa33e33087cf7f77adaae7b83471f51cd724ae5a2b6a12bf5a2b9ab0e7edb53d19314d62bc77fd02d0eb1da1d348796f0000000049454e44ae426082</data>
-    </image>
-    <image name="image4">
-        <data format="PNG" length="1029">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000003cc49444154388d959431681c471486bf132a56a0e2042b58c11d9cc1812ca4f06ce51d1288b64ceb4e228d8d53a44b1308724a57696dd2586962a5882d3541e7c2308280660a47b790e87421163a880e9d510e9f10423b988397e2ce275fac803dcdbfefb1f3f3fd6f76b6b46db7b96cc5b3b1e4bd9ceca30c3a40051a9d06499840078ab0c0751cf16c4cf9ac4c1ee4a537f74f5dea0ae4bd9c6c31a33be88282eea04ba212bad35d48c1879e6c31c3871e2a6fefff5fe3b492828385c102d65916a61720bfa8e7cee6c0413488c87bf9bb1b9b7d431116987d830a1566d7d09fee8febcddd4dfab37deabb7554a8deda5fba6cc61a2ddde92eed411b152a667a335001dbb14393d1ccf35e4e3c1bd33a6b95feeb7129711116b4ce5ac4b331aee326c85dc78d4d7545633bf6d2c497127bef45858ab9b3b9f1e9a7957482f4759251b27723ceae66e4bd7cc2f435a9ebb831791116347a8d7727eebee8ca8d8f6fc0000819934e6808f4a0dd69630f2dd9079fd11e5ccc7a8258854a5aad96f014367fdb845968ec36207c5bdbbd3654a0feac4efd519de5af6fb0f6e39af44ffa3241ac42253f3cfd89982b987d4b5a5113637853f35e8bac92614f1c0b44dcffe53edd1757f0de107f78855bb76fc1b6dde6fcaf7379b0fa40e454e4e8e8a5c82b9183bd03915391e69b7a2cd26c1c48f3f840961a4bb2f3f78e3c5c7d288b9f2e4a2daa492daa49548e24bdbe2823d387f23e2b96580209249658e458e4bb6fee89baa6248a6a522e97a516d584c76b8fdfcbf4488ee44bb9294a94acc8cab0792ab2f2d58a44514d80a1f1c1af47d2dc13916311b1436dee35454e45644f445e89c8c1484775734fe4fcf45ca4317c7fc7eec8f6cf3b12952301248a6a325d7fb6c1d2274bacff69d14582695bb4d7ac05eb689f605d038dc60606ed33ac336832ea58629fb085a1f08af6ee2a7ef47505c0545a4d311d8bae688cb7e8aac662d0f309168baa26580c6a5e6330a8ea50e3f9048761b19a8277e88abeb8b978a6dc3f8ea49f60fe306812cc738346630e2d0a8d3bb428af718786d46bdc7343ead5b02663ebf916090adbb10423e3e49a662a9d4fb18145578784e9882c9dd7383fd2c090ce67380c6935c3e150d5942d5f4755531a58f4d50c0f4451c4cd2f9628ddbb7f4ffa270501a0c9b081019f01061d6458ef800282193429398e8294191c298b18b6c0a7b4f757d978b2c19d6fefa0942a955efefe52ee7e7f97f52775bc2f080280196646b152525c908f63a64186e322b662988c20e0d6ed659452a5892bdd7dd1958d4775baedf6f800bc1f3e8d0f65d8a0f0e07d7fd83bf1a8eb8ae5cf9789e378fc13fa177911c1cad7752bf10000000049454e44ae426082</data>
-    </image>
-</images>
-<connections>
-    <connection>
-        <sender>fileNewAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>fileNew()</slot>
-    </connection>
-    <connection>
-        <sender>fileOpenAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>fileOpen()</slot>
-    </connection>
-    <connection>
-        <sender>fileSaveAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>fileSave()</slot>
-    </connection>
-    <connection>
-        <sender>fileSaveAsAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>fileSaveAs()</slot>
-    </connection>
-    <connection>
-        <sender>filePrintAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>filePrint()</slot>
-    </connection>
-    <connection>
-        <sender>fileExitAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>fileExit()</slot>
-    </connection>
-    <connection>
-        <sender>helpIndexAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>helpIndex()</slot>
-    </connection>
-    <connection>
-        <sender>helpContentsAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>helpContents()</slot>
-    </connection>
-    <connection>
-        <sender>helpAboutAction</sender>
-        <signal>activated()</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>helpAbout()</slot>
-    </connection>
-    <connection>
-        <sender>m_pTreeSharedObjects</sender>
-        <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>dependencySelected(QListViewItem*)</slot>
-    </connection>
-    <connection>
-        <sender>m_pTreeSharedObjects</sender>
-        <signal>expanded(QListViewItem*)</signal>
-        <receiver>DependsUIBase</receiver>
-        <slot>dependencyExpanded(QListViewItem*)</slot>
-    </connection>
-</connections>
-<slots>
-    <slot>fileNew()</slot>
-    <slot>fileOpen()</slot>
-    <slot>fileSave()</slot>
-    <slot>fileSaveAs()</slot>
-    <slot>filePrint()</slot>
-    <slot>fileExit()</slot>
-    <slot>helpIndex()</slot>
-    <slot>helpContents()</slot>
-    <slot>helpAbout()</slot>
-    <slot access="protected" specifier="pure virtual">dependencyExpanded( QListViewItem * )</slot>
-    <slot specifier="pure virtual">dependencySelected( QListViewItem * )</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+    <addaction name="fileOpenAction"/>
+    <addaction name="separator"/>
+    <addaction name="fileExitAction"/>
+   </widget>
+   <addaction name="fileMenu"/>
+  </widget>
+  <action name="fileOpenAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>image2</normaloff>image2</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+   <property name="iconText">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+   <property name="name" stdset="0">
+    <cstring>fileOpenAction</cstring>
+   </property>
+  </action>
+  <action name="fileExitAction">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="iconText">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string/>
+   </property>
+   <property name="name" stdset="0">
+    <cstring>fileExitAction</cstring>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

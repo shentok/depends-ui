@@ -10,13 +10,11 @@ INCLUDEPATH += .
 # Input
 HEADERS += dependencyjob.h \
            dependsui.h \
-           importsexportsjob.h \
-           initjob.h
+           importsexportsjob.h
 FORMS += dependsuibase.ui
 SOURCES += dependencyjob.cpp \
            dependsui.cpp \
            importsexportsjob.cpp \
-           initjob.cpp \
            main.cpp
 
 RESOURCES += depends.qrc

@@ -24,9 +24,10 @@
 #include <QTextStream>
 #include <QTreeWidgetItem>
 
-DependencyJob::DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QString> *pLDDMap ) :
-	m_pItem( pItem ),
-	m_pLDDMap( pLDDMap ),
+LibraryPathsJob::LibraryPathsJob( const QString &file, QMap<QString, QString> *libraryPaths, QObject *parent ) :
+	QObject( parent ),
+	m_file( file ),
+	m_libraryPaths( libraryPaths ),
 	m_proc(),
 	m_stream( &m_proc )
 {
@@ -34,19 +35,60 @@ DependencyJob::DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QStrin
 
 	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
 	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
-
-	UnusedDependenciesJob *pJob = new UnusedDependenciesJob( pItem->text( 1 ), &m_unusedMap );
-	connect( pJob, SIGNAL( finished() ), this, SLOT( finishedUnusedDependenciesJob() ) );
 }
 
-void DependencyJob::finishedUnusedDependenciesJob()
+
+void LibraryPathsJob::start()
 {
-	const QStringList args = QStringList() << "-p" << m_pItem->text( 1 );
+	const QStringList args = QStringList() << m_file;
+
+	m_proc.start( "ldd", args );
+}
+
+
+void LibraryPathsJob::readLineStdout()
+{
+	while ( m_proc.canReadLine() || !m_stream.atEnd() )
+	{
+		const QString line = m_stream.readLine();
+
+		const QRegExp re( "^\\s+(\\S+) => (\\S+) \\(0x[0-9a-f]+\\)" );
+		if ( re.indexIn( line ) >= 0 )
+		{
+			(*m_libraryPaths)[ re.cap( 1 ) ] = re.cap( 2 );
+		}
+	}
+
+	if ( m_proc.state() == QProcess::NotRunning )
+	{
+		emit finished();
+	}
+}
+
+
+DependenciesJob::DependenciesJob( QTreeWidgetItem *treeWidgetItem, const QMap<QString, QString> *libraryPaths, QObject *parent ) :
+	QObject( parent ),
+	m_treeWidgetItem( treeWidgetItem ),
+	m_libraryPaths( libraryPaths ),
+	m_proc(),
+	m_stream( &m_proc )
+{
+	m_proc.setReadChannel( QProcess::StandardOutput );
+
+	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
+	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+}
+
+
+void DependenciesJob::start()
+{
+	const QStringList args = QStringList() << "-p" << m_treeWidgetItem->text( 1 );
 
 	m_proc.start( "objdump", args );
 }
 
-void DependencyJob::readLineStdout()
+
+void DependenciesJob::readLineStdout()
 {
 	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
@@ -55,66 +97,28 @@ void DependencyJob::readLineStdout()
 		const QRegExp re( "\\s+NEEDED\\s+(\\S+)" );
 		if ( re.indexIn( line ) >= 0 )
 		{
-			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pItem );
+			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_treeWidgetItem );
 
 			pItem->setText( 0, re.cap( 1 ) );
-			pItem->setText( 1, (*m_pLDDMap)[ re.cap( 1 ) ] );
-			if ( m_unusedMap.contains( (*m_pLDDMap)[ re.cap( 1 ) ] ) )
-			{
-			//	pItem->setEnabled( false );
-			}
-			else
-			{
-#warning				pItem->setExpandable( true );
-			}
+			pItem->setText( 1, (*m_libraryPaths)[ re.cap( 1 ) ] );
 		}
 	}
 
 	if ( m_proc.state() == QProcess::NotRunning )
 	{
-		if ( m_pItem->childCount() == 0 )
-		{
-#warning			m_pItem->setExpandable( false );
-		}
-
 		emit finished();
-		disconnect( this, 0, 0, 0 );
-		deleteLater();
 	}
 }
 
 
-DependencyJob::UnusedDependenciesJob::UnusedDependenciesJob( const QString &file, QMap<QString, QString> *pUnusedMap ) :
-	m_pUnusedMap( pUnusedMap ),
-	m_proc(),
-	m_stream( &m_proc )
+DependencyJobs::DependencyJobs( QTreeWidgetItem *treeWidgetItem, QObject *parent ) :
+	QObject( parent ),
+	m_libraryPaths(),
+	m_libraryPathsJob( treeWidgetItem->text( 1 ), &m_libraryPaths, this ),
+	m_dependenciesJob( treeWidgetItem, &m_libraryPaths, this )
 {
-	m_proc.setReadChannel( QProcess::StandardOutput );
+	connect( &m_libraryPathsJob, SIGNAL(finished()), &m_dependenciesJob, SLOT(start()) );
+	connect( &m_dependenciesJob, SIGNAL(finished()), this, SIGNAL(finished()) );
 
-	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
-	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
-
-	const QStringList args = QStringList() << "-u" << file;
-
-	m_proc.start( "ldd", args );
-}
-
-
-void DependencyJob::UnusedDependenciesJob::readLineStdout()
-{
-	while ( m_proc.canReadLine() || !m_stream.atEnd() )
-	{
-		const QString line = m_stream.readLine();
-
-		const QRegExp re( "\\s+(\\S+)" );
-		if ( re.indexIn( line ) >= 0 )
-			(*m_pUnusedMap)[ re.cap( 1 ) ] = QFileInfo( re.cap( 1 ) ).fileName();
-	}
-
-	if ( m_proc.state() == QProcess::NotRunning )
-	{
-		emit finished();
-		disconnect( this, 0, 0, 0 );
-		deleteLater();
-	}
+	m_libraryPathsJob.start();
 }

@@ -49,7 +49,6 @@ private Q_SLOTS:
 
 private:
 	Ui::DependsUIBase m_ui;
-	QMap<QString, QString> m_lddMap;
 	QString m_dirPath;
 };
 

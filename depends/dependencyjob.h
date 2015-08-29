@@ -28,48 +28,66 @@
 
 class QTreeWidgetItem;
 
-/**
- * @author Bernhard Beschow <bbeschow (.at) cs.tu-berlin.de>
- */
-class DependencyJob : public QObject
+class LibraryPathsJob : public QObject
 {
 	Q_OBJECT
 public:
-	class UnusedDependenciesJob;
-
-	DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QString> *pLDDMap );
+	LibraryPathsJob( const QString &file, QMap<QString, QString> *libraryPaths, QObject *parent = 0 );
 
 signals:
 	void finished();
 
+public slots:
+	void start();
+
 protected slots:
-	void finishedUnusedDependenciesJob();
 	void readLineStdout();
 
 protected:
-	QTreeWidgetItem *m_pItem;
-	const QMap<QString, QString> *m_pLDDMap;
-	QMap<QString, QString> m_unusedMap;
+	QString m_file;
+	QMap<QString, QString> *const m_libraryPaths;
 	QProcess m_proc;
 	QTextStream m_stream;
 };
 
-class DependencyJob::UnusedDependenciesJob : public QObject
+class DependenciesJob : public QObject
 {
 	Q_OBJECT
 public:
-	UnusedDependenciesJob( const QString &file, QMap<QString, QString> *pUnusedMap );
+	DependenciesJob( QTreeWidgetItem *treeWidgetItem, const QMap<QString, QString> *libraryPaths, QObject *parent = 0 );
 
 signals:
 	void finished();
+
+public slots:
+	void start();
 
 protected slots:
 	void readLineStdout();
 
 protected:
-	QMap<QString, QString> *m_pUnusedMap;
+	QTreeWidgetItem *const m_treeWidgetItem;
+	const QMap<QString, QString> *m_libraryPaths;
 	QProcess m_proc;
 	QTextStream m_stream;
+};
+
+/**
+ * @author Bernhard Beschow <bbeschow (.at) cs.tu-berlin.de>
+ */
+class DependencyJobs : public QObject
+{
+	Q_OBJECT
+public:
+	DependencyJobs( QTreeWidgetItem *treeWidgetItem, QObject *parent = 0 );
+
+signals:
+	void finished();
+
+protected:
+	QMap<QString, QString> m_libraryPaths;
+	LibraryPathsJob m_libraryPathsJob;
+	DependenciesJob m_dependenciesJob;
 };
 
 #endif

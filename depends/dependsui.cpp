@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "dependsui.h"
 
-#include "initjob.h"
 #include "importsexportsjob.h"
 #include "dependencyjob.h"
 
@@ -42,7 +41,7 @@ DependsUI::DependsUI( QWidget *parent, Qt::WindowFlags flags ) :
 
 	connect( m_ui.fileOpenAction, SIGNAL(activated()), this, SLOT(fileOpen()) );
 	connect( m_ui.fileExitAction, SIGNAL(activated()), this, SLOT(fileExit()) );
-	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencyExpanded(QTreeWidgetItem*)) );
+	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(dependencyExpanded(QTreeWidgetItem*)) );
 	connect( m_ui.m_pTreeSharedObjects, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(dependencySelected(QTreeWidgetItem*)) );
 }
 
@@ -89,20 +88,23 @@ void DependsUI::openFile( const QString &file )
 	QTreeWidgetItem *pItem = new QTreeWidgetItem( m_ui.m_pTreeSharedObjects );
 	pItem->setText( 0, QFileInfo( file ).fileName() );
 	pItem->setText( 1, file );
-#warning	pItem->setExpandable( true );
 
-	new InitJob( file, &m_lddMap );
+	DependencyJobs *job = new DependencyJobs( pItem, this );
+	connect( job, SIGNAL(finished()), job, SLOT(deleteLater()) );
 }
 
 void DependsUI::dependencyExpanded( QTreeWidgetItem *pItem )
 {
-	if ( pItem->childCount() > 0 )
-		return;
-
-	new DependencyJob( pItem, &m_lddMap );
+	for ( int i = 0; i < pItem->childCount(); ++i )
+	{
+		QTreeWidgetItem *childItem = pItem->child( i );
+		DependencyJobs *job = new DependencyJobs( childItem, this );
+		connect( job, SIGNAL(finished()), job, SLOT(deleteLater()) );
+	}
 }
 
 void DependsUI::dependencySelected( QTreeWidgetItem *pItem )
 {
-	new ImportsExportsJob( pItem, m_ui.m_pListImports, m_ui.m_pListExports );
+	ImportsExportsJob *job = new ImportsExportsJob( pItem, m_ui.m_pListImports, m_ui.m_pListExports );
+	connect( job, SIGNAL(finished()), job, SLOT(deleteLater()) );
 }

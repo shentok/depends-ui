@@ -39,7 +39,8 @@ QIcon iconFromType( const QString &type )
 }
 
 
-ImportsExportsJob::ExportsJob::ExportsJob( const QString &file, QTreeWidget *pExports, QMap<QString, QString> *pMap ) :
+ExportsJob::ExportsJob( const QString &file, QTreeWidget *pExports, QMap<QString, QString> *pMap ) :
+	m_file( file ),
 	m_pExports( pExports ),
 	m_pExportsMap( pMap ),
 	m_proc(),
@@ -49,14 +50,17 @@ ImportsExportsJob::ExportsJob::ExportsJob( const QString &file, QTreeWidget *pEx
 
 	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
 	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+}
 
-	const QStringList args = QStringList() << "-TC" << file;
+void ExportsJob::start()
+{
+	const QStringList args = QStringList() << "-TC" << m_file;
 
 	m_proc.start( "objdump", args );
 }
 
 
-void ImportsExportsJob::ExportsJob::readLineStdout()
+void ExportsJob::readLineStdout()
 {
 	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
@@ -92,13 +96,12 @@ void ImportsExportsJob::ExportsJob::readLineStdout()
 	if ( m_proc.state() == QProcess::NotRunning )
 	{
 		emit finished();
-		disconnect( this, 0, 0, 0 );
-		deleteLater();
 	}
 }
 
 
-ImportsExportsJob::ImportsJob::ImportsJob( const QString &file, QTreeWidget *pImports, const QMap<QString, QString> *pMap ) :
+ImportsJob::ImportsJob( const QString &file, QTreeWidget *pImports, const QMap<QString, QString> *pMap ) :
+	m_file( file ),
 	m_pImports( pImports ),
 	m_pImportsMap( pMap ),
 	m_proc(),
@@ -108,14 +111,18 @@ ImportsExportsJob::ImportsJob::ImportsJob( const QString &file, QTreeWidget *pIm
 
 	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
 	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
+}
 
-	const QStringList args = QStringList() << "-TC" << file;
+
+void ImportsJob::start()
+{
+	const QStringList args = QStringList() << "-TC" << m_file;
 
 	m_proc.start( "objdump", args );
 }
 
 
-void ImportsExportsJob::ImportsJob::readLineStdout()
+void ImportsJob::readLineStdout()
 {
 	while ( m_proc.canReadLine() || !m_stream.atEnd() )
 	{
@@ -142,33 +149,19 @@ void ImportsExportsJob::ImportsJob::readLineStdout()
 	if ( m_proc.state() == QProcess::NotRunning )
 	{
 		emit finished();
-		disconnect( this, 0, 0, 0 );
-		deleteLater();
 	}
 }
 
 ImportsExportsJob::ImportsExportsJob( QTreeWidgetItem *pItem, QTreeWidget *pImports, QTreeWidget *pExports ) :
 	m_pItem( pItem ),
-	m_pImports( pImports )
+	m_exportsJob( pItem->text( 1 ), pExports, &m_map ),
+	m_importsJob( pItem->parent() ? pItem->parent()->text( 1 ) : "", pImports, &m_map )
 {
 	pImports->clear();
 	pExports->clear();
 
-	ExportsJob *pJob = new ExportsJob( pItem->text( 1 ), pExports, &m_map );
+	connect( &m_exportsJob, SIGNAL(finished()), &m_importsJob, SLOT(start()) );
+	connect( &m_importsJob, SIGNAL(finished()), this, SIGNAL(finished()) );
 
-	connect( pJob, SIGNAL( finished() ), this, SLOT( buildImports() ) );
-}
-
-
-void ImportsExportsJob::buildImports()
-{
-	if ( m_pItem->parent() != 0 )
-	{
-		ImportsJob *pJob = new ImportsJob( m_pItem->parent()->text( 1 ), m_pImports, &m_map );
-		connect( pJob, SIGNAL( finished() ), this, SIGNAL( finished() ) );
-	}
-	else
-	{
-		emit finished();
-	}
+	m_exportsJob.start();
 }

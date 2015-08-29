@@ -35,13 +35,13 @@ DependencyJob::DependencyJob( QTreeWidgetItem *pItem, const QMap<QString, QStrin
 	connect( &m_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readLineStdout()) );
 	connect( &m_proc, SIGNAL(finished(int)), this, SLOT(readLineStdout()) );
 
-	UnusedDependenciesJob *pJob = new UnusedDependenciesJob( pItem->text( 2 ), &m_unusedMap );
+	UnusedDependenciesJob *pJob = new UnusedDependenciesJob( pItem->text( 1 ), &m_unusedMap );
 	connect( pJob, SIGNAL( finished() ), this, SLOT( finishedUnusedDependenciesJob() ) );
 }
 
 void DependencyJob::finishedUnusedDependenciesJob()
 {
-	const QStringList args = QStringList() << "-p" << m_pItem->text( 2 );
+	const QStringList args = QStringList() << "-p" << m_pItem->text( 1 );
 
 	m_proc.start( "objdump", args );
 }
@@ -58,7 +58,7 @@ void DependencyJob::readLineStdout()
 			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pItem );
 
 			pItem->setText( 0, re.cap( 1 ) );
-			pItem->setText( 2, (*m_pLDDMap)[ re.cap( 1 ) ] );
+			pItem->setText( 1, (*m_pLDDMap)[ re.cap( 1 ) ] );
 			if ( m_unusedMap.contains( (*m_pLDDMap)[ re.cap( 1 ) ] ) )
 			{
 			//	pItem->setEnabled( false );

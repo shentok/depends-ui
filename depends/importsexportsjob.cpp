@@ -54,18 +54,18 @@ void ImportsExportsJob::ExportsJob::readLineStdout()
 
 			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pExports );
 
-			pItem->setText( 0, re.cap( 1 ) );
-			pItem->setText( 1, re.cap( 2 ) );
-			pItem->setText( 2, re.cap( 3 ) );
-			pItem->setText( 3, re.cap( 4 ) );
-			pItem->setText( 4, re.cap( 5 ) );
-			pItem->setText( 5, re.cap( 6 ) );
-			pItem->setText( 6, re.cap( 7 ) );
-			pItem->setText( 7, re.cap( 8 ) );
-			pItem->setText( 8, re.cap( 9 ) );
-			pItem->setText( 9, re.cap( 10 ) );
-			pItem->setText( 10, re.cap( 11 ) );
-			pItem->setText( 11, re.cap( 12 ) );
+			pItem->setText( 0, re.cap( 8 ) );
+			pItem->setText( 1, re.cap( 12 ) );
+			pItem->setText( 2, re.cap( 1 ) );
+			pItem->setText( 3, re.cap( 2 ) );
+			pItem->setText( 4, re.cap( 3 ) );
+			pItem->setText( 5, re.cap( 4 ) );
+			pItem->setText( 6, re.cap( 5 ) );
+			pItem->setText( 7, re.cap( 6 ) );
+			pItem->setText( 8, re.cap( 7 ) );
+			pItem->setText( 9, re.cap( 9 ) );
+			pItem->setText( 10, re.cap( 10 ) );
+			pItem->setText( 11, re.cap( 11 ) );
 
 			(*m_pExportsMap)[ re.cap( 12 ) ] = line;
 		}
@@ -103,29 +103,18 @@ void ImportsExportsJob::ImportsJob::readLineStdout()
 	{
 		const QString line = m_stream.readLine();
 
-		const QRegExp re( "^([0-9a-f]+)\\s(.)(.)(.)(.)(.)(.)(.)\\s(\\S+)\t([0-9a-f]+)\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
+		const QRegExp re( "^[0-9a-f]+\\s......(.)\\s(\\S+)\t[0-9a-f]+\\s\\s?(\\s{11}|\\S+\\s*)\\s(\\S.*)$" );
 		if ( re.indexIn( line ) >= 0 )
 		{
-			if ( re.cap( 9 ).compare( "*UND*" ) != 0 )
+			if ( re.cap( 2 ).compare( "*UND*" ) != 0 )
 				continue;
 
-			if ( m_pImportsMap->contains( re.cap( 12 ) ) )
+			if ( m_pImportsMap->contains( re.cap( 4 ) ) )
 			{
-//				re.search( (*m_pImportsMap)[ re.cap( 12 ) ] );
 				QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pImports );
 
 				pItem->setText( 0, re.cap( 1 ) );
-				pItem->setText( 1, re.cap( 2 ) );
-				pItem->setText( 2, re.cap( 3 ) );
-				pItem->setText( 3, re.cap( 4 ) );
-				pItem->setText( 4, re.cap( 5 ) );
-				pItem->setText( 5, re.cap( 6 ) );
-				pItem->setText( 6, re.cap( 7 ) );
-				pItem->setText( 7, re.cap( 8 ) );
-				pItem->setText( 8, re.cap( 9 ) );
-				pItem->setText( 9, re.cap( 10 ) );
-				pItem->setText( 10, re.cap( 11 ) );
-				pItem->setText( 11, re.cap( 12 ) );
+				pItem->setText( 1, re.cap( 4 ) );
 			}
 		}
 	}
@@ -145,7 +134,7 @@ ImportsExportsJob::ImportsExportsJob( QTreeWidgetItem *pItem, QTreeWidget *pImpo
 	pImports->clear();
 	pExports->clear();
 
-	ExportsJob *pJob = new ExportsJob( pItem->text( 2 ), pExports, &m_map );
+	ExportsJob *pJob = new ExportsJob( pItem->text( 1 ), pExports, &m_map );
 
 	connect( pJob, SIGNAL( finished() ), this, SLOT( buildImports() ) );
 }
@@ -155,7 +144,7 @@ void ImportsExportsJob::buildImports()
 {
 	if ( m_pItem->parent() != 0 )
 	{
-		ImportsJob *pJob = new ImportsJob( m_pItem->parent()->text( 2 ), m_pImports, &m_map );
+		ImportsJob *pJob = new ImportsJob( m_pItem->parent()->text( 1 ), m_pImports, &m_map );
 		connect( pJob, SIGNAL( finished() ), this, SIGNAL( finished() ) );
 	}
 	else

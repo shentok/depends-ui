@@ -90,7 +90,7 @@ void DependsUI::openFile( const QString &file )
 
 	QTreeWidgetItem *pItem = new QTreeWidgetItem( m_ui.m_pTreeSharedObjects );
 	pItem->setText( 0, QFileInfo( file ).fileName() );
-	pItem->setText( 2, file );
+	pItem->setText( 1, file );
 #warning	pItem->setExpandable( true );
 
 	new InitJob( file, &m_lddMap );

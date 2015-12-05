@@ -23,6 +23,22 @@
 #include <QTreeWidget>
 
 
+QIcon iconFromType( const QString &type )
+{
+	if ( type == "F" )
+	{
+		return QIcon( ":/icons/function.png" );
+	}
+
+	if ( type == "O" )
+	{
+		return QIcon( ":/icons/object.png" );
+	}
+
+	return QIcon();
+}
+
+
 ImportsExportsJob::ExportsJob::ExportsJob( const QString &file, QTreeWidget *pExports, QMap<QString, QString> *pMap ) :
 	m_pExports( pExports ),
 	m_pExportsMap( pMap ),
@@ -54,18 +70,20 @@ void ImportsExportsJob::ExportsJob::readLineStdout()
 
 			QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pExports );
 
-			pItem->setText( 0, re.cap( 8 ) );
-			pItem->setText( 1, re.cap( 12 ) );
-			pItem->setText( 2, re.cap( 1 ) );
-			pItem->setText( 3, re.cap( 2 ) );
-			pItem->setText( 4, re.cap( 3 ) );
-			pItem->setText( 5, re.cap( 4 ) );
-			pItem->setText( 6, re.cap( 5 ) );
-			pItem->setText( 7, re.cap( 6 ) );
-			pItem->setText( 8, re.cap( 7 ) );
-			pItem->setText( 9, re.cap( 9 ) );
-			pItem->setText( 10, re.cap( 10 ) );
-			pItem->setText( 11, re.cap( 11 ) );
+			pItem->setText( 0, re.cap( 12 ) );
+			pItem->setText( 1, re.cap( 1 ) );
+			pItem->setText( 2, re.cap( 2 ) );
+			pItem->setText( 3, re.cap( 3 ) );
+			pItem->setText( 4, re.cap( 4 ) );
+			pItem->setText( 5, re.cap( 5 ) );
+			pItem->setText( 6, re.cap( 6 ) );
+			pItem->setText( 7, re.cap( 7 ) );
+			pItem->setText( 8, re.cap( 9 ) );
+			pItem->setText( 9, re.cap( 10 ) );
+			pItem->setText( 10, re.cap( 11 ) );
+
+			const QIcon icon = iconFromType( re.cap( 8 ) );
+			pItem->setIcon( 0, icon );
 
 			(*m_pExportsMap)[ re.cap( 12 ) ] = line;
 		}
@@ -113,8 +131,10 @@ void ImportsExportsJob::ImportsJob::readLineStdout()
 			{
 				QTreeWidgetItem *pItem = new QTreeWidgetItem( m_pImports );
 
-				pItem->setText( 0, re.cap( 1 ) );
-				pItem->setText( 1, re.cap( 4 ) );
+				pItem->setText( 0, re.cap( 4 ) );
+
+				const QIcon icon = iconFromType( re.cap( 1 ) );
+				pItem->setIcon( 0, icon );
 			}
 		}
 	}

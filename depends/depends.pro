@@ -18,3 +18,5 @@ SOURCES += dependencyjob.cpp \
            importsexportsjob.cpp \
            initjob.cpp \
            main.cpp
+
+RESOURCES += depends.qrc

@@ -14,6 +14,10 @@
   <property name="windowTitle">
    <string>Dependency Walker</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="depends.qrc">
+    <normaloff>:/icons/depends.png</normaloff>:/icons/depends.png</iconset>
+  </property>
   <property name="opaqueMoving" stdset="0">
    <bool>false</bool>
   </property>
@@ -62,11 +66,6 @@
          </property>
          <column>
           <property name="text">
-           <string>Type</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
            <string>Name</string>
           </property>
          </column>
@@ -81,11 +80,6 @@
          <property name="showSortIndicator" stdset="0">
           <bool>true</bool>
          </property>
-         <column>
-          <property name="text">
-           <string>Type</string>
-          </property>
-         </column>
          <column>
           <property name="text">
            <string>Name</string>
@@ -173,18 +167,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="label" stdset="0">
-    <string>Tools</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="fileOpenAction"/>
-  </widget>
   <widget class="QMenuBar" name="MenuBar">
    <property name="geometry">
     <rect>
@@ -206,8 +188,8 @@
   </widget>
   <action name="fileOpenAction">
    <property name="icon">
-    <iconset>
-     <normaloff>image2</normaloff>image2</iconset>
+    <iconset resource="depends.qrc">
+     <normaloff>:/icons/open.png</normaloff>:/icons/open.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -223,6 +205,10 @@
    </property>
   </action>
   <action name="fileExitAction">
+   <property name="icon">
+    <iconset resource="depends.qrc">
+     <normaloff>:/icons/close.png</normaloff>:/icons/close.png</iconset>
+   </property>
    <property name="text">
     <string>E&amp;xit</string>
    </property>
@@ -238,6 +224,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="depends.qrc"/>
+ </resources>
  <connections/>
 </ui>

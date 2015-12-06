@@ -46,6 +46,7 @@ public Q_SLOTS:
 private Q_SLOTS:
 	void dependencyExpanded( QTreeWidgetItem *pItem );
 	void dependencySelected( QTreeWidgetItem *pItem );
+	void setRootItemExpanded();
 
 private:
 	Ui::DependsUIBase m_ui;

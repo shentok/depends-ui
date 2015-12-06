@@ -91,6 +91,7 @@ void DependsUI::openFile( const QString &file )
 
 	DependencyJobs *job = new DependencyJobs( pItem, this );
 	connect( job, SIGNAL(finished()), job, SLOT(deleteLater()) );
+	connect( job, SIGNAL(finished()), this, SLOT(setRootItemExpanded()) );
 }
 
 void DependsUI::dependencyExpanded( QTreeWidgetItem *pItem )
@@ -107,4 +108,9 @@ void DependsUI::dependencySelected( QTreeWidgetItem *pItem )
 {
 	ImportsExportsJob *job = new ImportsExportsJob( pItem, m_ui.m_pListImports, m_ui.m_pListExports );
 	connect( job, SIGNAL(finished()), job, SLOT(deleteLater()) );
+}
+
+void DependsUI::setRootItemExpanded()
+{
+	m_ui.m_pTreeSharedObjects->topLevelItem( 0 )->setExpanded( true );
 }
